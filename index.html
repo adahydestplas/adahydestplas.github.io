@@ -1,11 +1,81 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		
-	</head>
-	<body>
-		<h1>Hello World</h1>
-		<p>I'm hosted with GitHub Pages.</p>
-	</body>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Plan 3D NovaTerra 3D</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <!-- Inclusion de Three.js et OrbitControls depuis un CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    // Création de la scène
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xaaaaaa);
+
+    // Configuration de la caméra
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 1000);
+    camera.position.set(0, 100, 200);
+
+    // Création du renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Ajout des contrôles pour naviguer dans la scène
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Ajout d'un helper pour visualiser le sol
+    const gridHelper = new THREE.GridHelper(500, 50);
+    scene.add(gridHelper);
+
+    // Niveau Souterrain : Représente les infrastructures souterraines (couleur gris foncé)
+    const geometryUnderground = new THREE.BoxGeometry(200, 20, 200);
+    const materialUnderground = new THREE.MeshStandardMaterial({ color: 0x444444 });
+    const underground = new THREE.Mesh(geometryUnderground, materialUnderground);
+    underground.position.set(0, -20, 0);
+    scene.add(underground);
+
+    // Niveau de la Rue : Zone de vie et de loisirs (couleur verte)
+    const geometryStreet = new THREE.BoxGeometry(200, 10, 200);
+    const materialStreet = new THREE.MeshStandardMaterial({ color: 0x00aa00 });
+    const street = new THREE.Mesh(geometryStreet, materialStreet);
+    street.position.set(0, 0, 0);
+    scene.add(street);
+
+    // Niveau Aérien : Réseau de mobilité (couleur bleue avec transparence)
+    const geometryAerial = new THREE.BoxGeometry(200, 10, 200);
+    const materialAerial = new THREE.MeshStandardMaterial({ color: 0x0000aa, transparent: true, opacity: 0.5 });
+    const aerial = new THREE.Mesh(geometryAerial, materialAerial);
+    aerial.position.set(0, 30, 0);
+    scene.add(aerial);
+
+    // Éclairage ambiant et directionnel
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(50, 100, 50);
+    scene.add(directionalLight);
+
+    // Fonction d'animation
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Gestion du redimensionnement de la fenêtre
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
 </html>
